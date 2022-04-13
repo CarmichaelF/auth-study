@@ -1,4 +1,6 @@
 import { Button, Input, Stack } from '@chakra-ui/react';
+import { GetServerSideProps } from 'next';
+import { parseCookies } from 'nookies';
 import { FormEvent, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -35,3 +37,21 @@ export default function Home() {
     </Stack>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const cookies = parseCookies(ctx);
+  const { 'nextauth.token': token } = cookies;
+
+  if (token) {
+    return {
+      redirect: {
+        destination: '/dashboard',
+        permanent: false,
+      }
+    }
+  }
+
+  return {
+    props: {}
+  };
+};
